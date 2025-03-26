@@ -1,10 +1,10 @@
 <?php
-require_once '../app/models/Database.php'; // Corrected path to Database.php
+require_once '../app/models/Database.php'; 
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 try {
-    $conn = Database::getConnection(); // Get the database connection
+    $conn = Database::getConnection(); 
     $sql = "SELECT * FROM personal_info WHERE id = :id";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -32,7 +32,7 @@ function calculate_age($dob) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Personal Info</title>
-    <link rel="stylesheet" href="../public/view.css"> <!-- Corrected path to view.css -->
+    <link rel="stylesheet" href="css/view.css">
 </head>
 <body>
     <div class="view-container">

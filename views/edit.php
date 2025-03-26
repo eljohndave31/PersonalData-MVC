@@ -1,100 +1,61 @@
 <?php
-require_once '../app/models/Database.php'; // Corrected path to Database.php
+// filepath: c:\Users\USER\OneDrive\Desktop\Xamppp\htdocs\PersonalData1.1\views\edit.php
 
-// Get the user ID from the URL
+require_once '../app/models/PersonalDataModel.php';
+
+// Initialize the model
+$model = new PersonalDataModel();
+
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-try {
-    $conn = Database::getConnection(); // Get the database connection
-    $sql = "SELECT * FROM personal_info WHERE id = :id";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$user) {
-        echo "<h3 style='color:red; text-align:center; font-family: Arial, sans-serif;'>Record not found!</h3>";
-        exit();
-    }
-} catch (PDOException $e) {
-    die("<h3 style='color:red; text-align:center;'>Failed to fetch record: " . $e->getMessage() . "</h3>");
+$user = $model->getRecordById($id);
+
+if (!$user) {
+    echo "<h3 style='color:red; text-align:center; font-family: Arial, sans-serif;'>Record not found!</h3>";
+    exit();
 }
 
-// Update the data
+// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $last_name = $_POST['last_name'];
-    $first_name = $_POST['first_name'];
-    $middle_name = $_POST['middle_name'];
-    $dob = $_POST['dob'];
-    $sex = $_POST['sex'];
-    $civil_status = $_POST['civil_status'];
-    $tin = $_POST['tin'];
-    $nationality = $_POST['nationality'];
-    $religion = $_POST['religion'];
-    $birth_street = $_POST['birth_street'];
-    $birth_city = $_POST['birth_city'];
-    $birth_province = $_POST['birth_province'];
-    $birth_country = $_POST['birth_country'];
-    $birth_zip_code = $_POST['birth_zip_code'];
-    $home_street = $_POST['home_street'];
-    $home_city = $_POST['home_city'];
-    $home_province = $_POST['home_province'];
-    $home_country = $_POST['home_country'];
-    $home_zip_code = $_POST['home_zip_code'];
-    $mobile = $_POST['mobile'];
-    $email = $_POST['email'];
-    $telephone = $_POST['telephone'];
-    $father_last_name = $_POST['father_last_name'];
-    $father_first_name = $_POST['father_first_name'];
-    $father_middle_name = $_POST['father_middle_name'];
-    $mother_last_name = $_POST['mother_last_name'];
-    $mother_first_name = $_POST['mother_first_name'];
-    $mother_middle_name = $_POST['mother_middle_name'];
+    // Prepare data for update
+    $data = [
+        ':last_name' => $_POST['last_name'],
+        ':first_name' => $_POST['first_name'],
+        ':middle_name' => $_POST['middle_name'],
+        ':dob' => $_POST['dob'],
+        ':sex' => $_POST['sex'],
+        ':civil_status' => $_POST['civil_status'],
+        ':tin' => $_POST['tin'],
+        ':nationality' => $_POST['nationality'],
+        ':religion' => $_POST['religion'],
+        ':birth_street' => $_POST['birth_street'],
+        ':birth_city' => $_POST['birth_city'],
+        ':birth_province' => $_POST['birth_province'],
+        ':birth_country' => $_POST['birth_country'],
+        ':birth_zip_code' => $_POST['birth_zip_code'],
+        ':home_street' => $_POST['home_street'],
+        ':home_city' => $_POST['home_city'],
+        ':home_province' => $_POST['home_province'],
+        ':home_country' => $_POST['home_country'],
+        ':home_zip_code' => $_POST['home_zip_code'],
+        ':mobile' => $_POST['mobile'],
+        ':email' => $_POST['email'],
+        ':telephone' => $_POST['telephone'],
+        ':father_last_name' => $_POST['father_last_name'],
+        ':father_first_name' => $_POST['father_first_name'],
+        ':father_middle_name' => $_POST['father_middle_name'],
+        ':mother_last_name' => $_POST['mother_last_name'],
+        ':mother_first_name' => $_POST['mother_first_name'],
+        ':mother_middle_name' => $_POST['mother_middle_name'],
+    ];
 
-    try {
-        $update_sql = "UPDATE personal_info SET last_name=:last_name, first_name=:first_name, middle_name=:middle_name, dob=:dob, sex=:sex, civil_status=:civil_status, tin=:tin, nationality=:nationality, religion=:religion, 
-                       birth_street=:birth_street, birth_city=:birth_city, birth_province=:birth_province, birth_country=:birth_country, birth_zip_code=:birth_zip_code, home_street=:home_street, home_city=:home_city, home_province=:home_province, 
-                       home_country=:home_country, home_zip_code=:home_zip_code, mobile=:mobile, email=:email, telephone=:telephone, father_last_name=:father_last_name, father_first_name=:father_first_name, father_middle_name=:father_middle_name, 
-                       mother_last_name=:mother_last_name, mother_first_name=:mother_first_name, mother_middle_name=:mother_middle_name WHERE id=:id";
-        $stmt = $conn->prepare($update_sql);
-        $stmt->bindParam(':last_name', $last_name);
-        $stmt->bindParam(':first_name', $first_name);
-        $stmt->bindParam(':middle_name', $middle_name);
-        $stmt->bindParam(':dob', $dob);
-        $stmt->bindParam(':sex', $sex);
-        $stmt->bindParam(':civil_status', $civil_status);
-        $stmt->bindParam(':tin', $tin);
-        $stmt->bindParam(':nationality', $nationality);
-        $stmt->bindParam(':religion', $religion);
-        $stmt->bindParam(':birth_street', $birth_street);
-        $stmt->bindParam(':birth_city', $birth_city);
-        $stmt->bindParam(':birth_province', $birth_province);
-        $stmt->bindParam(':birth_country', $birth_country);
-        $stmt->bindParam(':birth_zip_code', $birth_zip_code);
-        $stmt->bindParam(':home_street', $home_street);
-        $stmt->bindParam(':home_city', $home_city);
-        $stmt->bindParam(':home_province', $home_province);
-        $stmt->bindParam(':home_country', $home_country);
-        $stmt->bindParam(':home_zip_code', $home_zip_code);
-        $stmt->bindParam(':mobile', $mobile);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':telephone', $telephone);
-        $stmt->bindParam(':father_last_name', $father_last_name);
-        $stmt->bindParam(':father_first_name', $father_first_name);
-        $stmt->bindParam(':father_middle_name', $father_middle_name);
-        $stmt->bindParam(':mother_last_name', $mother_last_name);
-        $stmt->bindParam(':mother_first_name', $mother_first_name);
-        $stmt->bindParam(':mother_middle_name', $mother_middle_name);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-        if ($stmt->execute()) {
-            header("Location: ../public/submit.php?success=updated");
-            exit();
-        } else {
-            echo "<h3 style='color:red; text-align:center;'>Error updating record.</h3>";
-        }
-    } catch (PDOException $e) {
-        die("<h3 style='color:red; text-align:center;'>Failed to update record: " . $e->getMessage() . "</h3>");
+    // Update the record
+    if ($model->updateRecord($id, $data)) {
+        header("Location: ../public/submit.php?success=updated");
+        exit();
+    } else {
+        echo "<h3 style='color:red; text-align:center;'>Error updating record.</h3>";
     }
 }
 ?>
@@ -105,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Personal Info</title>
-    <link rel="stylesheet" href="../public/edit.css"> <!-- Corrected path to edit.css -->
+    <link rel="stylesheet" href="css/edit.css"> 
 </head>
 <body>
 

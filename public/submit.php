@@ -1,10 +1,8 @@
 <?php
-require_once '../app/models/Database.php'; // Corrected path
+require_once '../app/models/Database.php'; 
 
-
-// Fetch all records
 try {
-    $conn = Database::getConnection(); // Get the database connection
+    $conn = Database::getConnection(); 
     $sql = "SELECT * FROM personal_info ORDER BY id DESC";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
@@ -13,7 +11,6 @@ try {
     die("<h3 style='color:red; text-align:center;'>Failed to fetch records: " . $e->getMessage() . "</h3>");
 }
 
-// Function to calculate age
 function calculate_age($dob) {
     $dob_date = new DateTime($dob);
     $today = new DateTime();
@@ -27,7 +24,7 @@ function calculate_age($dob) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Submission</title>
-    <link rel="stylesheet" href="../public/submit.css"> <!-- Corrected path to submit.css -->
+    <link rel="stylesheet" href="css/submit.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -41,6 +38,18 @@ function calculate_age($dob) {
         <h2 style="color: green;">Deleted Successfully!</h2>
     <?php endif; ?>
 <?php endif; ?>
+<form method="GET" action="test.php" style="text-align: center; margin-bottom: 20px;">
+    <label for="municipality">Select Municipality:</label>
+    <select name="municipality" id="municipality" onchange="this.form.submit()">
+        <option value="">-- All Municipalities --</option>
+        <?php foreach ($municipalities as $municipality): ?>
+            <option value="<?= htmlspecialchars($municipality) ?>" <?= ($selectedMunicipality == $municipality) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($municipality) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</form>
+
 
 <div class="table-container">
     <table border="1">

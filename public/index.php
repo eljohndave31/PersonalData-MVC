@@ -10,12 +10,10 @@ require_once '../app/controllers/PersonalDataControllers.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Information Form</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <form action="submir.php" method="POST" id="personalForm" class="personal-form">
-        <!-- Personal Data -->
-        <h2 class="section-title">Personal Data</h2>
+<form action="../app/controllers/PersonalDataControllers.php" method="POST" id="personalForm" class="personal-form">        <h2 class="section-title">Personal Data</h2>
         <div class="form-group">
             <label for="last_name" class="form-label">Last Name:</label>
             <input type="text" id="last_name" name="last_name" required pattern="^[A-Za-z\s]+$" class="form-input" placeholder="Enter your last name">

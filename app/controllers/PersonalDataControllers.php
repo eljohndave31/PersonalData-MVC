@@ -1,43 +1,35 @@
 <?php
 // filepath: c:\Users\USER\OneDrive\Desktop\Xamppp\htdocs\PersonalData1.1\app\controllers\PersonalDataControllers.php
-
+require_once __DIR__ . '/../models/Database.php';
 require_once __DIR__ . '/../models/PersonalDataModel.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    function clean_input($data) {
-        return htmlspecialchars(stripslashes(trim($data)));
-    }
+function clean_input($data) {
+    return htmlspecialchars(stripslashes(trim($data)));
+}
 
-    // Validation
+function validate_input($data) {
     $required_fields = ['last_name', 'first_name', 'middle_name', 'dob', 'sex', 'civil_status', 'nationality', 'mobile'];
     $errors = [];
 
     foreach ($required_fields as $field) {
-        if (empty($_POST[$field])) {
+        if (empty($data[$field])) {
             $errors[] = ucfirst(str_replace("_", " ", $field)) . " is required.";
         }
     }
 
-    if (!empty($_POST['email']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+    if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Invalid email format.";
     }
 
-    if (!empty($_POST['mobile']) && !preg_match("/^\d{10,}$/", $_POST['mobile'])) {
+    if (!empty($data['mobile']) && !preg_match("/^\d{10,}$/", $data['mobile'])) {
         $errors[] = "Mobile number should have at least 10 digits.";
     }
 
-    if (!empty($errors)) {
-        echo "<h2 style='color: red;'>Please fix the following errors:</h2>";
-        echo "<ul style='color: red;'>";
-        foreach ($errors as $error) {
-            echo "<li>$error</li>";
-        }
-        echo "</ul>";
-        echo "<br><a href='javascript:history.back()'>Back to Previous Page</a>";
-        exit();
-    }
+    return $errors;
+}
 
-    // Prepare data
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Use the existing clean_input() function
     $personalData = [
         ':last_name' => clean_input($_POST['last_name']),
         ':first_name' => clean_input($_POST['first_name']),
@@ -69,13 +61,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ':tin' => !empty($_POST['tin']) ? clean_input($_POST['tin']) : NULL,
     ];
 
-    // Call Model to Insert Data
+    // Insert data into the database
     $model = new PersonalDataModel();
     if ($model->insertPersonalData($personalData)) {
-        header("Location: ../../views/submit.php");
+        header("Location: ../../public/submit.php?success=submitted");
         exit();
     } else {
-        echo "Error in saving data.";
+        echo "<h3 style='color:red; text-align:center;'>Error saving data. Please try again.</h3>";
     }
 }
 ?>
